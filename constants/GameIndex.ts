@@ -8,3 +8,16 @@ export const GameIndex: string[] = [
   "seven",
   "eight",
 ];
+
+export const TenGameIndex: string[] = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+];

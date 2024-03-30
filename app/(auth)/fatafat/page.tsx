@@ -33,6 +33,7 @@ const formSchema = z.object({
 
 const Fatafat = () => {
   const [gameIndex, setGameIndex] = useState<string>("");
+  const [deleteIndex, setDeleteIndex] = useState<string>("");
 
   // define form element
 
@@ -81,6 +82,57 @@ const Fatafat = () => {
 
       toast({
         title: "Uploaded Successfully",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(response, null, 2)}
+            </code>
+          </pre>
+        ),
+      });
+    } catch (error: any) {
+      console.log(error);
+      toast({
+        title: "Something went wrong",
+        description: error.response.data.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const onDelete = async () => {
+    const formattedDate = DateFormatter();
+
+    if (!deleteIndex) {
+      return toast({
+        title: "Something went wrong",
+        description: "Please select a game index",
+        variant: "destructive",
+      });
+    }
+
+    // try catch block
+
+    try {
+      const token = Cookies.get("ff-admin-token");
+
+      const headers = {
+        "ff-admin-token": token,
+      };
+
+      const data = {
+        date: formattedDate,
+        indexAt: deleteIndex,
+      };
+
+      const deleteData = await Axios.post("/post/delete-result", data, {
+        headers,
+      });
+
+      const response = await deleteData.data;
+
+      return toast({
+        title: "Deleted Successfully",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <code className="text-white">
@@ -153,6 +205,31 @@ const Fatafat = () => {
             </Button>
           </form>
         </Form>
+        <div className="flex flex-col items-center justify-center mt-5">
+          <h3>Delete Results</h3>
+          <div className="flex justify-center items-center gap-3 container my-3 flex-wrap ">
+            {GameIndex.map((item: string, index: number) => (
+              <button
+                key={item}
+                className={`text-sm rounded-md font-semibold px-2 py-1 md:text-2xl md:px-10 uppercase md:py-2 ${
+                  item === deleteIndex
+                    ? "bg-green-500 text-black"
+                    : "bg-slate-500"
+                }`}
+                onClick={() => setDeleteIndex(item)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+          <Button
+            variant={"destructive"}
+            className="w-full md:w-60"
+            onClick={onDelete}
+          >
+            Delete Data
+          </Button>
+        </div>
       </div>
     </div>
   );

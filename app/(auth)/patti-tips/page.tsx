@@ -1,7 +1,7 @@
 "use client";
 
 import Header from "@/components/shared/Header";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,10 +23,10 @@ import { Axios } from "@/utils/Axios";
 import { GameIndex } from "@/constants/GameIndex";
 
 const formSchema = z.object({
-  tips: z.string().min(1, { message: "It can only be a single digit" }),
+  tips: z.string(),
 });
 
-const Update = () => {
+const PattiTips = () => {
   const [gameIndex, setGameIndex] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -48,12 +48,8 @@ const Update = () => {
 
     const formattedDate = DateFormatter();
 
-    // get token
-
     try {
       const token = Cookies.get("ff-admin-token");
-
-      if (!token) throw new Error("No token");
 
       const headers = {
         "ff-admin-token": token,
@@ -67,11 +63,11 @@ const Update = () => {
         indexAt: gameIndex,
       };
 
-      const postData = await Axios.post("/post/add-tips", data, { headers });
+      const postData = await Axios.post("/post/add-patti-tips", data, {
+        headers,
+      });
 
       const response = await postData.data;
-
-      console.log(response);
 
       toast({
         title: "Tips updated successfully",
@@ -103,7 +99,7 @@ const Update = () => {
 
   return (
     <div>
-      <Header title="Kolkata FF Tips" />
+      <Header title="Kolkata FF Patti Tips" />
       <div className="container">
         <div className="flex flex-col items-center justify-center">
           <div className="flex justify-center items-center gap-3 container my-10 flex-wrap ">
@@ -150,9 +146,11 @@ const Update = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full md:w-60">
-                Submit
-              </Button>
+              <div className="flex gap-2">
+                <Button type="submit" className="w-full md:w-60">
+                  Submit
+                </Button>
+              </div>
             </form>
           </Form>
           <div className="mt-2 flex space-x-3 md:-mt-10">
@@ -169,4 +167,4 @@ const Update = () => {
   );
 };
 
-export default Update;
+export default PattiTips;
