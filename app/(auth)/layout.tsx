@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/components/hooks/useAuth";
+import { UseAuth } from "@/components/hooks/useAuth";
 
 import Loading from "@/components/shared/Loading";
 import { ModeToggle } from "@/components/shared/ModeToggle";
@@ -33,7 +33,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   // check if logged in
 
   const checkIfLoggedIn = async () => {
-    const valid: User = await useAuth();
+    const valid: User = await UseAuth();
 
     if (valid.authenticated) {
       setLoading(false);

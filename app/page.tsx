@@ -42,7 +42,7 @@ const LandingPage = () => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     // try catch
-
+console.log(data);
     try {
       const logIn = await Axios.post("/auth/admin/log-in", data);
 

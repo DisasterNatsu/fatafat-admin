@@ -3,7 +3,7 @@
 import { Axios } from "@/utils/Axios";
 import Cookies from "js-cookie";
 
-export const useAuth = async () => {
+export const UseAuth = async () => {
   // get token from cookies
 
   const token = Cookies.get("ff-admin-token");

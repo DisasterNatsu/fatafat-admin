@@ -140,7 +140,7 @@ const Fatafat = () => {
               name="gameResultNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Patti Result</FormLabel>
+                  <FormLabel>Number Result</FormLabel>
                   <FormControl>
                     <Input placeholder="eg: 1" {...field} required />
                   </FormControl>
