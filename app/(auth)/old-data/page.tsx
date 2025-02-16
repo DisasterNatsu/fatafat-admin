@@ -23,17 +23,20 @@ import { Axios } from "@/utils/Axios";
 import { GameIndex } from "@/constants/GameIndex";
 
 const formSchema = z.object({
-  tips: z.string(),
+  date: z.string(),
+  patti: z.string().min(3).max(3, "Must be 3 numbers"),
+  digit: z.string().max(1),
 });
 
 const PattiTips = () => {
   const [gameIndex, setGameIndex] = useState<string>("");
-  const [inputValue, setInputValue] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      tips: "",
+      date: "",
+      patti: "",
+      digit: "",
     },
   });
 
@@ -49,6 +52,19 @@ const PattiTips = () => {
     const formattedDate = DateFormatter();
 
     try {
+      // Parse patti and digit to numbers
+      const pattiNumber = parseInt(value.patti.toString(), 10);
+      const digitNumber = parseInt(value.digit.toString(), 10);
+
+      // Check if patti and digit are valid numbers
+      if (isNaN(pattiNumber) || isNaN(digitNumber)) {
+        return toast({
+          title: "Invalid input",
+          description: "Please enter valid numbers for patti and digit.",
+          variant: "destructive",
+        });
+      }
+
       const token = Cookies.get("ff-admin-token");
 
       const headers = {
@@ -56,16 +72,15 @@ const PattiTips = () => {
       };
 
       const data = {
-        date: formattedDate,
-        tips: {
-          tip: inputValue,
+        date: value.date,
+        data: {
+          gameResultPatti: pattiNumber,
+          gameNumber: digitNumber,
         },
         indexAt: gameIndex,
       };
 
-      const postData = await Axios.post("/post/add-patti-tips", data, {
-        headers,
-      });
+      const postData = await Axios.post("/post/add-new", data, { headers });
 
       const response = await postData.data;
 
@@ -87,14 +102,6 @@ const PattiTips = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const handleEmojiClick = () => {
-    setInputValue(inputValue + " ✅");
-  };
-
-  const handleCrossEmojiClick = () => {
-    setInputValue(inputValue + " ❌");
   };
 
   return (
@@ -120,47 +127,59 @@ const PattiTips = () => {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="w-2/3 space-y-6"
+              className="w-2/3 space-y-5"
             >
               <FormField
                 control={form.control}
-                name="tips"
+                name="date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tips</FormLabel>
+                    <FormLabel>Date</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="eg: 123"
-                        {...field}
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        required
-                      />
+                      <Input placeholder="eg: DD-MM-YYYY" {...field} required />
                     </FormControl>
-                    <p className="text-xs">
-                      Spearate the tip numbers by &apos;,&apos; - eg: 1, 2, 3,
-                      4, 5
-                    </p>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className="flex gap-2">
-                <Button type="submit" className="w-full md:w-60">
-                  Submit
-                </Button>
-              </div>
+              {/* GamePatti */}
+
+              <FormField
+                control={form.control}
+                name="patti"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Patti</FormLabel>
+                    <FormControl>
+                      <Input placeholder="eg: 123" {...field} required />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Digit */}
+
+              <FormField
+                control={form.control}
+                name="digit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Digit</FormLabel>
+                    <FormControl>
+                      <Input placeholder="eg: 1" {...field} required />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit" className="w-full md:w-60">
+                Submit
+              </Button>
             </form>
           </Form>
-          <div className="mt-2 flex space-x-3 md:-mt-10">
-            <Button variant={"outline"} onClick={handleEmojiClick}>
-              ✅
-            </Button>
-            <Button variant={"outline"} onClick={handleCrossEmojiClick}>
-              ❌
-            </Button>
-          </div>
         </div>
       </div>
     </div>

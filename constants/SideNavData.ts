@@ -27,8 +27,8 @@ export const SideNavData = [
     gap: true,
   },
   {
-    title: "Patti Tips",
-    link: "/patti-tips",
+    title: "Old Data",
+    link: "/old-data",
     icon: MdOutlineTipsAndUpdates,
   },
   {
